@@ -20,6 +20,12 @@ from tkinter import filedialog
 
 from typing import Tuple
 
+import os
+import platform
+import subprocess
+
+# for other linux platforms
+
 
 def readtxt(filename, color: Tuple[int, int, int]):
     doc = docx.Document(filename)
@@ -184,10 +190,12 @@ def generateReport():
     while sentences:
         row = table.add_row().cells # Adding a row and then adding data in it.
         row[0].text = sentences[0]
+        sentences.remove(sentences[0])
 
     while child2:
         row = table.add_row().cells # Adding a row and then adding data in it.
-        row[0].text = sentences[0]
+        row[1].text = child2[0]
+        child2.remove(child2[0])
 
     #green = paragraph.add_run(sentences[0])
     #paragraph.add_run("\n\n")
@@ -206,6 +214,15 @@ def removeAfter(childtags): #removes everything after the child tag, example "pa
     childAfter = [i.rsplit(']', 1)[0] + seperator for i in childtags]
 
     return childAfter
+
+def getDocument():
+    if platform.system() == 'Darwin':
+        subprocess.check_call(['open', 'report3.docx'])
+    elif platform.system() == 'Windows':
+        os.startfile('report3.docx')
+    # os.startfile(report3) # try either one for windows if the first option gives error
+    else:
+        subprocess.call('xdg-open', report3)
 
 
 if __name__ == '__main__':
@@ -237,6 +254,10 @@ if __name__ == '__main__':
     button.pack()
     # Creates button 2
     Button(window, text="Generate Report ", command=generateReport).pack()
+
+    getDoc = Button(window, text="Open Generated Report", command=getDocument)
+    getDoc.pack()
+
     # Creates button 3
     button = Button(text="End Program",command=window.destroy)
     button.pack()
